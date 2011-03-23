@@ -42,10 +42,11 @@ def update_ccengine():
 
     with cd(ccengine_basedir):
         run('./bin/buildout')
+
     run('sudo /etc/init.d/apache2 reload')
 
     # Update license RDF
-    with cd('/var/www/creativecommons.org/www/license.rdf'):
+    with cd(os.path.join(ccengine_basedir, '../www/license.rdf')):
         run('git pull')
 
 
