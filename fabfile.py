@@ -2,7 +2,7 @@ import os
 import urllib
 
 from fabric.api import *
-from fabric.colors import yellow
+from fabric.colors import yellow, green, white, red
 
 
 env.roledefs['live'] = ['webadmin@a5.creativecommons.org']
@@ -31,14 +31,42 @@ def _on_what(host_string=None, roledefs=None):
             return group
 
 
+def dont_panic():
+    print green(
+"""
+              _------_
+            .'        '.  \\|||
+           /            \\-_  )
+     \\\\\\| ,              ,__\\\\
+      (  /(  ,'-_____'-, )---'
+       ||//\\ \\ """, bold=True) + white("uuuuuuu", bold=True) + green(""" //
+       ',/  '.'----""", bold=True) + red(".'\\\\", bold=True) + green(""",
+              '-____""", bold=True) + red("\\,/", bold=True)
+    print red(
+"""
+             _  _ , , ___
+            |O)(_)|\\|' |
+           _             _
+          |_) /\\ |\\ | | /  |
+          |  /''\\| \\| | \\_ o""", bold=True)
+
+
 def update_ccengine():
     if _on_what() == 'devel':
         ccengine_basedir = CCENGINE_DEVEL_DIR
     else:
         ccengine_basedir = CCENGINE_LIVE_DIR
 
+    # update dependency checkouts
+    if _on_what() == 'devel':
+        with cd(os.path.join(ccengine_basedir, 'license.rdf')):
+            run('git pull')
+        with cd(os.path.join(ccengine_basedir, 'cc.license')):
+            run('git pull')
+
     with cd(os.path.join(ccengine_basedir, 'cc.engine')):
         run('git pull')
+
 
     with cd(ccengine_basedir):
         run('./bin/buildout')
