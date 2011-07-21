@@ -9,8 +9,8 @@ env.roledefs['live'] = ['webadmin@a5.creativecommons.org']
 env.roledefs['devel'] = ['webadmin@a7.creativecommons.org']
 
 
-CCENGINE_LIVE_DIR = '/var/www/creativecommons.org/cc.engine_sanity/'
-CCENGINE_DEVEL_DIR = '/var/www/staging.creativecommons.org/cc.engine_stage/'
+CCENGINE_LIVE_DIR = '/var/www/creativecommons.org/cc.engine_env/'
+CCENGINE_DEVEL_DIR = '/var/www/staging.creativecommons.org/cc.engine_env/'
 
 
 def _on_what(host_string=None, roledefs=None):
@@ -59,17 +59,14 @@ def update_ccengine():
 
     # update dependency checkouts
     if _on_what() == 'devel':
-        with cd(os.path.join(ccengine_basedir, 'license.rdf')):
+        with cd(os.path.join(ccengine_basedir, 'src/license.rdf')):
             run('git pull')
-        with cd(os.path.join(ccengine_basedir, 'cc.license')):
+        with cd(os.path.join(ccengine_basedir, 'src/cc.license')):
             run('git pull')
 
-    with cd(os.path.join(ccengine_basedir, 'cc.engine')):
+    with cd(os.path.join(ccengine_basedir, 'src/cc.engine')):
         run('git pull')
-
-
-    with cd(ccengine_basedir):
-        run('./bin/buildout')
+        run(ccengine_basedir + 'bin/python setup.py develop')
 
     run('sudo /etc/init.d/apache2 reload')
 
@@ -80,5 +77,5 @@ def update_ccengine():
 
 @roles('live')
 def clear_cache():
-    with cd('/var/www/creativecommons.org/cc.engine_sanity'):
+    with cd('/var/www/creativecommons.org/cc.engine_env'):
         run('rm -rf cache/licenses')
