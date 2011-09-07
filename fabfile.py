@@ -66,7 +66,10 @@ def update_ccengine():
 
     with cd(os.path.join(ccengine_basedir, 'src/cc.engine')):
         run('git pull')
+        # Why not update everything, and then cc.i18n.
+        # What a waste of cycles.  Oh well, it works!
         run(ccengine_basedir + 'bin/python setup.py develop -U')
+        run(ccengine_basedir + 'bin/easy_install --find-links http://code.creativecommons.org/basket/ -UaZ cc.i18n')
 
     run('sudo /etc/init.d/apache2 reload')
 
