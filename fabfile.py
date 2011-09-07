@@ -66,7 +66,7 @@ def update_ccengine():
 
     with cd(os.path.join(ccengine_basedir, 'src/cc.engine')):
         run('git pull')
-        run(ccengine_basedir + 'bin/python setup.py develop')
+        run(ccengine_basedir + 'bin/python setup.py develop -U')
 
     run('sudo /etc/init.d/apache2 reload')
 
