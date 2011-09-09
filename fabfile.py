@@ -57,19 +57,20 @@ def update_ccengine():
     else:
         ccengine_basedir = CCENGINE_LIVE_DIR
 
-    # update dependency checkouts
-    if _on_what() == 'devel':
-        with cd(os.path.join(ccengine_basedir, 'src/license.rdf')):
-            run('git pull')
-        with cd(os.path.join(ccengine_basedir, 'src/cc.license')):
-            run('git pull')
-
     with cd(os.path.join(ccengine_basedir, 'src/cc.engine')):
         run('git pull')
         # Why not update everything, and then cc.i18n.
         # What a waste of cycles.  Oh well, it works!
         run(ccengine_basedir + 'bin/python setup.py develop -U')
         run(ccengine_basedir + 'bin/easy_install --find-links http://code.creativecommons.org/basket/ -UaZ cc.i18n')
+
+    # update dependency checkouts
+    with cd(os.path.join(ccengine_basedir, 'src/cc.license')):
+        run('git pull')
+        run(ccengine_basedir + 'bin/python setup.py develop')
+    with cd(os.path.join(ccengine_basedir, 'src/license.rdf')):
+        run('git pull')
+        run(ccengine_basedir + 'bin/python setup.py develop')
 
     run('sudo /etc/init.d/apache2 reload')
 
